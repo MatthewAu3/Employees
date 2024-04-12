@@ -5,6 +5,7 @@ import com.Matthew.Employees.Exceptions.EmployeeNotFoundException;
 import com.Matthew.Employees.Models.Employee;
 import com.Matthew.Employees.Services.EmployeeService;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,11 +18,12 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/employees")
 public class EmployeeController {
 
-    EmployeeService employeeService;
-    EmployeeDAO employeeDAO;
+    private final EmployeeService employeeService;
+    private final EmployeeDAO employeeDAO;
 
-    public EmployeeController(EmployeeService employeeService) {
+    public EmployeeController(EmployeeService employeeService, EmployeeDAO employeeDAO) {
         this.employeeService = employeeService;
+        this.employeeDAO = employeeDAO;
     }
 
     @GetMapping
@@ -35,7 +37,7 @@ public class EmployeeController {
 
         try {
             employee = employeeService.getEmployeeById(id);
-        } catch(EmployeeNotFoundException e) {
+        } catch (EmployeeNotFoundException e) {
             return new ResponseEntity<>(NOT_FOUND);
         }
         return new ResponseEntity<>(employee, OK);
@@ -48,12 +50,18 @@ public class EmployeeController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteEmployeeById(@PathVariable Integer id) {
-        if (employeeDAO.existsById(id)) {
-            employeeDAO.deleteById(id);
-            return ResponseEntity.noContent().build();
-        }
-        else {
-            return ResponseEntity.notFound().build();
+        try {
+            boolean deleted = employeeService.deleteEmployeeById(id);
+            if (deleted) {
+                return ResponseEntity.noContent().build();
+            } else {
+                throw new EmployeeNotFoundException("Employee not found with id: " + id);
+            }
+        } catch (EmployeeNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (Exception e) {
+            // Handle any other exceptions, such as database errors
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public class EmployeeService {
 
-    private EmployeeDAO employeeDAO;
+    private final EmployeeDAO employeeDAO;
 
     public EmployeeService(EmployeeDAO employeeDAO) {
         this.employeeDAO = employeeDAO;
@@ -29,5 +29,16 @@ public class EmployeeService {
     // create Employee
     public Employee createEmployee(Employee employee) {
         return employeeDAO.save(employee);
+    }
+
+
+    // Delete Employee by Id
+    public boolean deleteEmployeeById(int id) {
+        if (employeeDAO.existsById(id)) {
+            employeeDAO.deleteById(id);
+            return true;
+        } else {
+            throw new EmployeeNotFoundException("Employee not found with id: " + id);
+        }
     }
 }

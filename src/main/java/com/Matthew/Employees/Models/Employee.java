@@ -3,37 +3,36 @@ package com.Matthew.Employees.Models;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import org.springframework.data.annotation.Id;
 
 @Entity
-@Table(name = "Employees")
+@Table(name = "employees")
 public class Employee {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int employeeId;
     private String firstName;
     private String lastName;
     private String email;
 
-    public Employee(){
+    public Employee() {
 
     }
 
-    public Employee(int id, String firstName, String lastName, String email) {
-        this.id = id;
+    public Employee(int employeeId, String firstName, String lastName, String email) {
+        this.employeeId = employeeId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
     }
 
-    public int getId() {
-        return id;
+    public int getEmployeeId() {
+        return employeeId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setEmployeeId(int employeeId) {
+        this.employeeId = employeeId;
     }
 
     public String getFirstName() {

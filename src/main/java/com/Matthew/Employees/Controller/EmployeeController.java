@@ -51,14 +51,17 @@ public class EmployeeController {
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteEmployeeById(@PathVariable Integer id) {
         try {
-            if (employeeService.deleteEmployeeById(id)) {
+            boolean deleted = employeeService.deleteEmployeeById(id);
+            if (deleted) {
                 return ResponseEntity.noContent().build();
             } else {
-                return ResponseEntity.notFound().build();
+                throw new EmployeeNotFoundException("Employee not found with id: " + id);
             }
+        } catch (EmployeeNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } catch (Exception e) {
-            // Handle any exceptions, such as database errors
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            // Handle any other exceptions, such as database errors
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 }

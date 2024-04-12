@@ -53,6 +53,8 @@ public class EmployeeController {
         try {
             boolean deleted = employeeService.deleteEmployeeById(id);
             if (deleted) {
+                //noContent() creates a builder with the status code 204 No Content, which indicates that the server has successfully processed the request, but there is no content to send back in the response payload.
+                //build(): This method is called on the builder created by noContent(). It constructs the ResponseEntity object based on the settings specified in the builder and returns it.
                 return ResponseEntity.noContent().build();
             } else {
                 throw new EmployeeNotFoundException("Employee not found with id: " + id);

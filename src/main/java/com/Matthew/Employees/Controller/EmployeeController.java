@@ -5,6 +5,7 @@ import com.Matthew.Employees.Exceptions.EmployeeNotFoundException;
 import com.Matthew.Employees.Models.Employee;
 import com.Matthew.Employees.Services.EmployeeService;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,11 +18,12 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/employees")
 public class EmployeeController {
 
-    EmployeeService employeeService;
-    EmployeeDAO employeeDAO;
+    private final EmployeeService employeeService;
+    private final EmployeeDAO employeeDAO;
 
-    public EmployeeController(EmployeeService employeeService) {
+    public EmployeeController(EmployeeService employeeService, EmployeeDAO employeeDAO) {
         this.employeeService = employeeService;
+        this.employeeDAO = employeeDAO;
     }
 
     @GetMapping
@@ -35,7 +37,7 @@ public class EmployeeController {
 
         try {
             employee = employeeService.getEmployeeById(id);
-        } catch(EmployeeNotFoundException e) {
+        } catch (EmployeeNotFoundException e) {
             return new ResponseEntity<>(NOT_FOUND);
         }
         return new ResponseEntity<>(employee, OK);
@@ -48,12 +50,15 @@ public class EmployeeController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteEmployeeById(@PathVariable Integer id) {
-        if (employeeDAO.existsById(id)) {
-            employeeDAO.deleteById(id);
-            return ResponseEntity.noContent().build();
-        }
-        else {
-            return ResponseEntity.notFound().build();
+        try {
+            if (employeeService.deleteEmployeeById(id)) {
+                return ResponseEntity.noContent().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            // Handle any exceptions, such as database errors
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

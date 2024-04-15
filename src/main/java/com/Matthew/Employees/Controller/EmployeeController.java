@@ -19,11 +19,11 @@ import static org.springframework.http.HttpStatus.OK;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
-    private final EmployeeDAO employeeDAO;
 
-    public EmployeeController(EmployeeService employeeService, EmployeeDAO employeeDAO) {
+
+    public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
-        this.employeeDAO = employeeDAO;
+
     }
 
     @GetMapping
@@ -47,6 +47,17 @@ public class EmployeeController {
     public Employee createEmployee(@RequestBody Employee employee) {
         return employeeService.createEmployee(employee);
     }
+
+   @PatchMapping("{id}")
+    public ResponseEntity<String> updateEmployeeById(@PathVariable Integer id, @RequestBody Employee employee){
+        try {
+            Employee updatedEmployee = employeeService.updateEmployee(id, employee);
+            return ResponseEntity.ok("Employee updated successfully with ID: " + updatedEmployee.getEmployeeId());
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+
+        }
+   }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteEmployeeById(@PathVariable Integer id) {

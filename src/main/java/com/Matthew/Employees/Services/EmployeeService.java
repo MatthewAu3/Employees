@@ -32,6 +32,17 @@ public class EmployeeService {
     }
 
 
+    public Employee updateEmployee(Integer id, Employee employee) throws EmployeeNotFoundException{
+        Employee existingEmployee = employeeDAO.findById(id).orElseThrow(() ->
+                new EmployeeNotFoundException("Employee not found with id: " + id));
+        if(employee.getFirstName() != null) existingEmployee.setFirstName(employee.getFirstName());
+        if(employee.getLastName() != null) existingEmployee.setLastName(employee.getLastName());
+        if(employee.getEmail() != null) existingEmployee.setEmail(employee.getEmail());
+
+        return employeeDAO.save(existingEmployee);
+    }
+
+
     // Delete Employee by Id
     public boolean deleteEmployeeById(int id) {
         if (employeeDAO.existsById(id)) {

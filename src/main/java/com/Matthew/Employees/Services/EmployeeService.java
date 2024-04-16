@@ -16,22 +16,24 @@ public class EmployeeService {
         this.employeeDAO = employeeDAO;
     }
 
-    // Get all employees
+    // Retrieve all employees from the database.
     public List<Employee> getAllEmployees() {
         return employeeDAO.findAll();
     }
 
-    // get Employee by Id
+    // Retrieve an employee by their unique identifier.
+    // Throws an EmployeeNotFoundException if no employee with the specified ID is found.
     public Employee getEmployeeById(int id) {
         return employeeDAO.findById(id).orElseThrow(()-> new EmployeeNotFoundException("Employee not found with id: " + id));
     }
 
-    // create Employee
+    // Create a new employee in the database.
     public Employee createEmployee(Employee employee) {
         return employeeDAO.save(employee);
     }
 
-
+    // Update an existing employee's information in the database.
+    // Throws an EmployeeNotFoundException if the employee with the specified ID is not found.
     public Employee updateEmployee(Integer id, Employee employee) throws EmployeeNotFoundException{
         Employee existingEmployee = employeeDAO.findById(id).orElseThrow(() ->
                 new EmployeeNotFoundException("Employee not found with id: " + id));
@@ -42,8 +44,8 @@ public class EmployeeService {
         return employeeDAO.save(existingEmployee);
     }
 
-
-    // Delete Employee by Id
+    // Delete an employee from the database by their ID.
+    // Throws an EmployeeNotFoundException if no employee with the specified ID is found.
     public boolean deleteEmployeeById(int id) {
         if (employeeDAO.existsById(id)) {
             employeeDAO.deleteById(id);
